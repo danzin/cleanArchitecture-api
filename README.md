@@ -1,2 +1,1 @@
-API following clean architecture principles. 
-
+Service oriented API
