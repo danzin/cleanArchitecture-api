@@ -16,7 +16,7 @@ const routes = app => {
     next();
   } );
 
-  app.use("/user", user);
+  app.use("/users", user);
   
 };
 

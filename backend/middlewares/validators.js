@@ -12,7 +12,7 @@ function idValidator(req, res, next) {
   }
 }
 
-function bodyValidator (req, res, next) {
+function bodyValidator(req, res, next){
   const isValid = req.body
     && typeof req.body === "object"
     && Object.keys(req.body).length > 0;
@@ -24,8 +24,20 @@ function bodyValidator (req, res, next) {
   }
 }
 
+function userDetailsValidator(req, res, next){
+  const isValid = req.body.email && req.body.password;
+
+  if(isValid){
+    next()
+  }else{
+    res.status(400).send(resMw.sendError(Messages.responses.argsMissing))
+  }
+}
+
+
 
 module.exports = {
   idValidator,
-  bodyValidator
+  bodyValidator,
+  userDetailsValidator
 }

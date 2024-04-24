@@ -16,6 +16,7 @@ class MongooseService {
     return this.model.findByIdAndDelete(id).exec();
   }
 
+
   findOne (query, projection = { __v: 0 }, options = { lean: true }) {
     return this.model
       .findOne( query, projection, options )
@@ -42,7 +43,9 @@ class MongooseService {
       .findByIdAndUpdate( id, body, options )
       .exec();
   }
-
+  // update(){
+  //   return this.model.save(body);
+  // }
 
 }
 

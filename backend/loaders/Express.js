@@ -23,6 +23,7 @@ class ExpressLoader {
       logger.info(`Express running, now listening on port ${config.port}`);
     });
   }
+  
 
   get Server () {
     return this.server;
