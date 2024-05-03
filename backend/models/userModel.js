@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema(
   {
@@ -11,6 +12,23 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 )
+
+userSchema.methods.matchPassword = async function(password){
+  return await bcrypt.compare(password, this.password)
+}
+
+
+// Mongoose middleware .pre() hashes the password on new users
+userSchema.pre('save', async function (next){
+  if(!this.isModified('password')){
+    next();
+  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+})
+
+
+
 
 const UserModel = mongoose.model('User', userSchema);
 module.exports = UserModel;

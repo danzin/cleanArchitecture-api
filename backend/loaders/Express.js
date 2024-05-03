@@ -1,9 +1,10 @@
-const bodyParser = require( "body-parser" );
-const express = require( "express" );
-const morgan = require( "morgan" );
-const routes = require( "../routes" );
-const logger = require( "../services/Logger" );
-const config = require( "../config" );
+const bodyParser = require("body-parser");
+const express = require("express");
+const morgan = require("morgan");
+const routes = require("../routes");
+const logger = require("../services/Logger");
+const config = require("../config");
+const cookieParser = require('cookie-parser');
 
 class ExpressLoader {
   constructor(){
@@ -16,6 +17,7 @@ class ExpressLoader {
     }));
     
     app.use(bodyParser.json({limit: "20mb"}));
+    app.use(cookieParser());
     routes(app);
     app.use(ExpressLoader.errorHandler);
 

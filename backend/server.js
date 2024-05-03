@@ -4,7 +4,7 @@ const logger = require( "./services/Logger" );
 
 
 
-//plug in the native ES6 promise library instead of mpromise
+//Plug in the native ES6 promise library instead of mpromise
 mongoose.Promise = global.Promise;
 
 // Connect to the DB an initialize the app if successful
