@@ -54,7 +54,7 @@ class MongooseService {
     return this.model
       .find( query, projection, options )
       .sort( sort )
-      .select( { __v: 0 } )
+      .select( { __v: 0, "password": 0 } )
       .exec();
   }
 
