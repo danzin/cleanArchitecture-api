@@ -4,7 +4,6 @@ const ObjectId = require("mongoose").Types.ObjectId;
 
 const idValidator = (req, res, next) =>  {
   const id = req.query.id || req.params.id || null;
-  
   if (id && typeof id === "string" && ObjectId.isValid(id)) {
     req.id = id;
     next();
@@ -21,7 +20,7 @@ const bodyValidator = (req, res, next) => {
   if (isValid) {
     next();
   } else {
-    res.status(400).send(resMw.sendError(Messages.responses.bodyNotProvided));
+    res.status(400).send(resMw.sendError(Messages.responses.invalidReqBody));
   }
 }
 

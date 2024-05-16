@@ -8,7 +8,7 @@ module.exports = {
     authTokenNotProvided: "Auth token not provided",
     errorParsingObject: "Invalid JSON object provided",
     invalidId: "Request ID not valid",
-    bodyNotProvided: "Request body is not valid",
+    invalidReqBody: "Request body is not valid",
     statusNotProvided: "Valid status not provided",
     forbidden: "Unauthorized",
     argsMissing: "Arguments are missing from request"

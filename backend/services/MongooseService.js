@@ -4,29 +4,6 @@ class MongooseService {
     this.model = Model;
   }
 
-    // async startTransaction() {
-    //   const session = await this.model.startSession();
-    //   session.startTransaction();
-    //   return session;
-    // }
-  
-    // // Commit the transaction
-    // async commitTransaction(session) {
-    //   await session.commitTransaction();
-    //   session.endSession();
-    // }
-  
-    // // Abort the transaction
-    // async abortTransaction(session) {
-    //   await session.abortTransaction();
-    //   session.endSession();
-    // }
-  
-    // // Create with transaction
-    // async createWithTransaction(body, session) {
-    //   return this.model.create([body], { session: session });
-    // }
-  
 
   aggregate(pipeline){
     return this.model.aggregate(pipeline).exec();
@@ -75,6 +52,19 @@ class MongooseService {
         return user.save(options);
       });
   }
+
+  async addPhotoToUser(userId, photoUrl,) {
+
+    return this.model.findOne({_id: userId}).exec()
+    .then(user => {
+      if (!user) {
+        throw new Error('User not found');
+      }
+      user.photos.push(photoUrl);
+      return user.save();
+    });
+  }
+
 
 
 }

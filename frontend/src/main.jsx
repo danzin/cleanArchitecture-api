@@ -9,18 +9,25 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
-  RouterProvider
+  RouterProvider,
+  Routes
 } from 'react-router-dom'
+import PrivateRoute from './components/PrivateRoute.jsx';
 import Signin from './screens/Signin.jsx';
 import Signup from './screens/Signup.jsx';
+import ProfileScreen from './screens/ProfileScreen.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={ <App/> }>
       <Route index={true} path='/' element={<Home/>}/>
-      <Route index={true} path='/signin' element={<Signin/>}/>
-      <Route index={true} path='/signup' element={<Signup/>}/>
-
+      <Route path='/signin' element={<Signin/>}/>
+      <Route path='/signup' element={<Signup/>}/>
+      
+      { /* Private Routes */ }
+      <Route path='' element={<PrivateRoute />}>
+        <Route path='/profile' element={<ProfileScreen />} />
+      </Route>
     </Route>
   )
 )

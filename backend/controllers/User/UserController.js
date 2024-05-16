@@ -52,7 +52,6 @@ async function signIn(req, res){
     const result = await UserServiceInstance.signin(req.body);
     if(result.success){
       const { token } = result;
-      console.log(token)
       delete result.token;
 
       return res.cookie('jwt', token, {
@@ -81,7 +80,7 @@ async function signOut(req, res){
 }
 
 
-async function editUser(req, res){
+async function editUser (req, res) {
   try {
     const editingUser = req.user;
     const userToEditId = req.id;
@@ -100,6 +99,7 @@ async function editUser(req, res){
     res.status(500).send(e);    
   }
 }
+
 
 
 module.exports = { 

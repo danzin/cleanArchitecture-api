@@ -1,9 +1,10 @@
-import React, { useEffect, useState  } from 'react'
+import { useEffect, useState  } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { useLoginMutation } from '../slices/usersApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
+import Loader from '../components/Loader';
 
 const Signin = () => {
   const [email, setEmail] = useState('');
@@ -31,9 +32,9 @@ const Signin = () => {
       navigate('/');
     } catch (e) {
       toast.error(e?.data?.body || e.error || e);
-    }
-   
+    } 
   };
+
   return (
 
       <div className="hero min-h-screen bg-base-200">
@@ -72,7 +73,9 @@ const Signin = () => {
                 </label>
               </div>
               <div className="form-control mt-6">
-                <button className="btn btn-primary" type="submit">Login</button>
+                <button className="btn btn-primary" type="submit" disabled={isLoading} >
+                  {isLoading ? <Loader/> : 'Login'}
+                </button>
               </div>
               <div>
                 <p>Don't have an account? <Link to='/signup' className='text-sky-500'>Register</Link></p>

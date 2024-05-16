@@ -1,28 +1,27 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
-import { useRegisterMutation } from '../slices/usersApiSlice';
 import { setCredentials } from '../slices/authSlice';
-
-const Signup = () => {
+import { useUpdateUserMutation } from '../slices/usersApiSlice';
+const ProfileScreen = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-
-  const navigate = useNavigate();
+  
+  const [updateUser, { isLoading }] = useUpdateUserMutation();
+  
   const dispatch = useDispatch();
   
-  const [register, { isLoading }] = useRegisterMutation();
   const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if(userInfo){
-      navigate('/')
+      setUsername(userInfo.username);
+      setEmail(userInfo.email);
     }
-  }, [navigate, userInfo])
+  }, [userInfo.username, userInfo.email])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,9 +29,16 @@ const Signup = () => {
       toast.error('Password don\'t match');
     }else{
       try {
-        const res = await register({username, email, password }).unwrap();
+        const res = await updateUser({
+            id: userInfo._id,
+            data: {
+              username,
+              email,
+              password: password || null
+            }
+          }).unwrap();
         dispatch(setCredentials({...res}));
-        navigate('/');
+        toast.success('Profile updated');
       } catch (e) {
         toast.error(e?.data?.body || e.error || e);
       }
@@ -44,8 +50,8 @@ const Signup = () => {
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content flex-col ">
         <div className="text-center">
-          <h1 className="text-5xl font-bold">Peek</h1>
-          <p className='py-6'> Register an account</p>
+        <h1 className="text-5xl font-bold">Edit profile</h1>
+
         </div>
         <div className="card sm:w-[30rem] shrink-0 shadow-2xl bg-base-100">
           <form className="card-body" onSubmit={handleSubmit}>
@@ -75,7 +81,7 @@ const Signup = () => {
             </div>
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Password</span>
+                <span className="label-text">New Password</span>
               </label>
               <input 
                 type="password"
@@ -98,13 +104,11 @@ const Signup = () => {
                 required />
             </div>
             <div className="form-control mt-6">
-              <button className="btn btn-primary" type="submit" disabled={isLoading} >
-                {isLoading ? <Loader/> : 'Register'}
+              <button className="btn btn-primary" type="submit"  >
+                {isLoading ? <Loader/> : 'Update'}
               </button>           
             </div>
-            <div>
-                <p>Already have an account? <Link to='/signin' className='text-sky-500'>Login</Link></p>
-              </div>
+
           </form>
         </div>
       </div>
@@ -114,4 +118,4 @@ const Signup = () => {
   )
 }
 
-export default Signup
+export default ProfileScreen

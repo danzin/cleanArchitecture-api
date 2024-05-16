@@ -15,7 +15,6 @@ class ExpressLoader {
       extended: false,
       limit: "20mb"
     }));
-    
     app.use(bodyParser.json({limit: "20mb"}));
     app.use(cookieParser());
     routes(app);

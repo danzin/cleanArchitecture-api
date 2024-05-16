@@ -7,11 +7,16 @@ const userSchema = new mongoose.Schema(
     email: {type: String, required: true},
     password: {type: String, required: true},
     isAdmin: { type: Boolean, default: false, required: true },
+    photos: {type: [String], validate: [arrayLimit, '{PATH} exceeds the limit of 10'] }
   },
   {
     timestamps: true,
   }
 )
+
+function arrayLimit(val){
+  return val.length <= 10;
+}
 
 userSchema.methods.matchPassword = async function(password){
   return await bcrypt.compare(password, this.password)
