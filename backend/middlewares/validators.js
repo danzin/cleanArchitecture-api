@@ -17,7 +17,7 @@ const bodyValidator = (req, res, next) => {
     && typeof req.body === "object"
     && Object.keys(req.body).length > 0;
 
-  if (isValid) {
+    if (isValid) {
     next();
   } else {
     res.status(400).send(resMw.sendError(Messages.responses.invalidReqBody));

@@ -90,7 +90,7 @@ async function editUser (req, res) {
     const result = await UserServiceInstance.editUser(editingUser, userToEditId, newEmail, newPassword);
 
     if (result.success) {
-      return res.send(result);
+      return res.send(result.body);
     } else {
       return res.status(400).send(result);
     }

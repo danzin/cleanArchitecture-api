@@ -1,4 +1,5 @@
 const user = require('./user');
+const photo = require('./photo');
 
 const routes = app => {
   app.use( ( req, res, next ) => {
@@ -17,6 +18,7 @@ const routes = app => {
   } );
 
   app.use("/users", user);
+  app.use("/photos", photo);
   
 };
 

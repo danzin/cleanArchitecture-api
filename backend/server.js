@@ -2,8 +2,6 @@ const config = require( "./config" );
 const mongoose = require( "mongoose" );
 const logger = require( "./services/Logger" );
 
-
-
 //Plug in the native ES6 promise library instead of mpromise
 mongoose.Promise = global.Promise;
 

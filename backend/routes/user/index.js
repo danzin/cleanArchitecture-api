@@ -1,6 +1,6 @@
 const express = require('express');
 const { createUser, getUser, signIn, editUser, getUsers, signOut } = require('../../controllers/User/UserController');
-const { uploadImage } = require('../../controllers/Image/ImageController');
+const { uploadImage, removeImage } = require('../../controllers/Image/ImageController');
 const { idValidator, bodyValidator, newUserValidator, userLoginDetailsValidator } = require('../../middlewares/validators');
 const { protected, isAdmin } = require('../../middlewares/auth');
 const { upload } = require('../../middlewares/multer');
@@ -14,7 +14,9 @@ router.post('/signin', bodyValidator, userLoginDetailsValidator, signIn);
 router.put('/:id', idValidator, bodyValidator, protected, editUser);
 router.post('/signout', signOut);
 
-router.post('/:id/upload',idValidator, protected, upload.single('image'), uploadImage)
+router.post('/image/upload', protected, upload.single('image'), uploadImage)
+router.delete('/:id/image/remove', idValidator, bodyValidator, protected, removeImage  )
+
 
 module.exports = router;
 

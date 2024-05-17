@@ -3,20 +3,20 @@ const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema(
   {
-    username: {type: String, required: true },
-    email: {type: String, required: true},
-    password: {type: String, required: true},
+    username: { type: String, required: true },
+    email: { type: String, required: true },
+    password: { type: String, required: true },
     isAdmin: { type: Boolean, default: false, required: true },
-    photos: {type: [String], validate: [arrayLimit, '{PATH} exceeds the limit of 10'] }
+    photos: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Image'
+    }]
   },
   {
     timestamps: true,
   }
 )
 
-function arrayLimit(val){
-  return val.length <= 10;
-}
 
 userSchema.methods.matchPassword = async function(password){
   return await bcrypt.compare(password, this.password)

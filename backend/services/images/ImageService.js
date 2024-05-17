@@ -1,28 +1,30 @@
 const config = require('../../config');
+
+const MongooseRepository = require('../../repositories/MongooseRepository');
+const UserModel = require('../../models/UserModel');
+const ImageModel = require('../../models/ImageModel');
 const cloudinary = require('cloudinary').v2;
-const UserModel = require('../../models/userModel');
-const MongooseService = require('../MongooseService');
 const streamifier = require('streamifier');
 
-// Configure Cloudinary with the credentials
 cloudinary.config({
   cloud_name: config.cloud_name,
   api_key: config.api_key,
   api_secret: config.api_secret
 });
-
 class ImageService {
-  
-  constructor(){
-    this.MongooseServiceInstance = new MongooseService(UserModel);
+  constructor() {
+    this.userRepository = new MongooseRepository(UserModel);
+    this.imageRepository = new MongooseRepository(ImageModel);
   }
 
-   async streamUpload (fileBuffer, userId) {
-    try {
-
-      const user = await this.MongooseServiceInstance.findById(userId);
-      if(!user){
-        return {success: false, body: 'User not found'}
+  async cloudUpload(fileBuffer, userId) {
+    return MongooseRepository.withTransaction(async (session) => {
+      const user = await this.userRepository.findById(userId, { __v: 0 }, { lean: true }, session);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      if (user.photos.length >= 10) {
+        throw new Error('Limit of 10 photos reached');
       }
 
       const result = await new Promise((resolve, reject) => {
@@ -35,15 +37,41 @@ class ImageService {
         });
         streamifier.createReadStream(fileBuffer).pipe(stream);
       });
-      await this.MongooseServiceInstance.addPhotoToUser(userId,result.url)
-      return {success: true, body: result};
-      
-    } catch (error) {
-      // Handle the error by throwing it
-      throw new Error(`Failed to upload image: ${error.message}`);
-    }
-  }
-};
 
+      const photo = await this.imageRepository.create({
+        url: result.url,
+        assetId: result.asset_id,
+        publicId: result.public_id,
+        createdAt: result.created_at,
+        user: userId
+      }, session);
+
+      await this.userRepository.addPhoto(userId, photo._id, {}, session);
+
+      return { success: true, body: photo };
+    });
+  }
+
+  async removeImage(userId, imagePubId) {
+    return MongooseRepository.withTransaction(async (session) => {
+      const user = await this.userRepository.findById(userId, { __v: 0 }, { lean: false }, session);
+      if (!user) {
+        return {success: false, body: 'User not found'};
+      }
+
+      const image = await this.imageRepository.findOne({ publicId: imagePubId }, { __v: 0 }, {}, session);
+      if (!image) {
+        return {success: false, body: 'Image not found'};
+      }
+
+      user.photos.pull(image._id);
+      await this.userRepository.update(userId, user, { new: true }, session);
+
+      await this.imageRepository.delete(image._id, session);
+
+      return { success: true, body: 'Image and reference removed successfully' };
+    });
+  }
+}
 
 module.exports = ImageService;

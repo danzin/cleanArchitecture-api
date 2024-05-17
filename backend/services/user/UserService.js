@@ -1,25 +1,25 @@
 const bcrypt = require('bcrypt');
-const MongooseService = require('../MongooseService');
-const UserModel = require('../../models/userModel');
+const MongooseRepository = require('../../repositories/MongooseRepository');
+const UserModel = require('../../models/UserModel');
 const { generateToken } = require('../../helpers/jwtHelper');
 
 class UserService {
 
   constructor(){
-    this.MongooseServiceInstance = new MongooseService(UserModel);
+    this.MongooseRepositoryInstance = new MongooseRepository(UserModel);
   }
   
 
   async create(newUser){
     try {
-      const existingUser = await this.MongooseServiceInstance.findOne({ email: newUser.email });
+      const existingUser = await this.MongooseRepositoryInstance.findOne({ email: newUser.email });
       if (existingUser) {
         return { success: false, message: 'User already exists' };
       }
 
-      // MongooseService calls .create() creating an atomic transaction calling .save(),
+      // MongooseRepository calls .create() creating an atomic transaction calling .save(),
       // which triggers the mongoose middleware and hashes the password
-      const { username, email, _id }  = await this.MongooseServiceInstance.create(newUser);
+      const { username, email, _id }  = await this.MongooseRepositoryInstance.create(newUser);
       const token = generateToken({username, email, _id})
       return { success: true, body: { username, email, _id }, token };
 
@@ -30,7 +30,7 @@ class UserService {
 
   async getUser(id){
     try {
-      const result = await this.MongooseServiceInstance.findById(id);
+      const result = await this.MongooseRepositoryInstance.findById(id);
 
       if(!result) return { success: false, body:'User not found'};
       return {success: true, body: result};
@@ -41,7 +41,7 @@ class UserService {
 
   async getUsers(){
     try {
-      const result = await this.MongooseServiceInstance.find({});
+      const result = await this.MongooseRepositoryInstance.find({});
 
       if(!result) return { success: false, body:'No users found'};
       return {success: true, body: result};
@@ -52,7 +52,7 @@ class UserService {
 
   async signin(userCredentials) {
     try {
-      const existingUser = await this.MongooseServiceInstance.findOne({ email: userCredentials.email });
+      const existingUser = await this.MongooseRepositoryInstance.findOne({ email: userCredentials.email });
      
       if(existingUser && (await existingUser.matchPassword(userCredentials.password))){
 
@@ -73,7 +73,7 @@ class UserService {
   async editUser(editingUser, userToEditId, newEmail, newPassword) {
     try {
       // Find the user to be edited
-      const userToEdit = await this.MongooseServiceInstance.findById(userToEditId);
+      const userToEdit = await this.MongooseRepositoryInstance.findById(userToEditId);
       if (!userToEdit) {
         return { success: false, body: 'User not found' };
       }
@@ -92,7 +92,7 @@ class UserService {
         updateBody.password = newPassword;
       }
 
-      const  { username, email, _id } = await this.MongooseServiceInstance.update(userToEditId, updateBody);
+      const  { username, email, _id } = await this.MongooseRepositoryInstance.update(userToEditId, updateBody);
 
       return { success: true, body: { username, email, _id } };
     } catch (e) {
