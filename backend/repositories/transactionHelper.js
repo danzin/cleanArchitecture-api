@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-async function withTransaction(fn) {
+async function initiateTransaction(fn) {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
@@ -15,4 +15,4 @@ async function withTransaction(fn) {
   }
 }
 
-module.exports = withTransaction;
+module.exports = initiateTransaction;

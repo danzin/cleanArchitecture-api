@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const withTransaction = require('./transactionHelper');
+const initiateTransaction = require('./transactionHelper');
 
 class MongooseRepository {
 
@@ -68,8 +68,8 @@ class MongooseRepository {
       });
   }
 
-  static async withTransaction(fn) {
-    return withTransaction(fn);
+  static async initiateTransaction(fn) {
+    return initiateTransaction(fn);
   }
 }
 
