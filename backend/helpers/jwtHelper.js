@@ -16,8 +16,8 @@ const generateToken = (user) => {
       }
     );  
       
-  } catch (error) {
-    return('Error generating token:', error);
+  } catch (e) {
+    return('Error generating token:', e);
   }
 };
 

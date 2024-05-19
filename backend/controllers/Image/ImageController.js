@@ -14,10 +14,15 @@ async function uploadImage (req, res) {
 
 async function removeImage (req, res) {
   try {
-    const {imageId} = req.body
+    const {imageId} = req.body;
+    const userId = req.user.id;
 
-    let result = await ImageServiceInstance.removeImage(req.params.id, imageId);
-    res.status(200).send(result);
+    let result = await ImageServiceInstance.removeImage(userId, imageId);
+    if(result.success){
+      res.status(200).send(result);
+    }else{
+      res.status(500).send(result.body)
+    }
     
   } catch (e) {
     console.error(e);

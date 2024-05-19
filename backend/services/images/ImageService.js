@@ -52,6 +52,7 @@ class ImageService {
   
         await this.userRepository.addPhoto(userId, photo._id, {}, session);
   
+   
         return { success: true, body: photo };
       });
 
@@ -63,29 +64,37 @@ class ImageService {
 
   async removeImage(userId, imagePubId) {
     try {
-
+      
       return MongooseRepository.initiateTransaction(async (session) => {
         const user = await this.userRepository.findById(userId, { __v: 0 }, { lean: false }, session);
         if (!user) {
-          throw new Error('User not found');
+          return { success: false, body:' User not found' };
         }
   
         const image = await this.imageRepository.findOne({ publicId: imagePubId }, { __v: 0 }, {}, session);
         if (!image) {
-          throw new Error('Image not found');
+          return { success: false, body: 'Image not found' };
         }
-  
+
         user.photos.pull(image._id);
-        await this.userRepository.update(userId, user, { new: true }, session);
-        await this.imageRepository.delete(image._id, session);
+        const response = await cloudinary.uploader.destroy(imagePubId, { resource_type: 'image', invalidate: true });
+        console.log(result)
+        if(response.result == 'ok'){
+          await this.userRepository.update(userId, user, { new: true }, session);
+          await this.imageRepository.delete(image._id, session);
+
+          return { success: true, body: result };
+        }else{
+          return { success: false, body: result };
+        }
         
-        return { success: true, body: 'Image removed successfully' };
       });
       
     } catch (e) {
-      return { success: false, body: e.message }
+      return { success: false, body: e.message };
     }
   }
+
 }
 
 module.exports = ImageService;

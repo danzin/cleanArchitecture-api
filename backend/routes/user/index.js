@@ -15,7 +15,7 @@ router.put('/:id', idValidator, bodyValidator, protected, editUser);
 router.post('/signout', signOut);
 
 router.post('/image/upload', protected, upload.single('image'), uploadImage)
-router.delete('/:id/image/remove', idValidator, bodyValidator, protected, removeImage  )
+router.delete('/image/remove', bodyValidator, protected, removeImage  )
 
 
 module.exports = router;
