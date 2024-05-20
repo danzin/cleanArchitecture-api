@@ -2,7 +2,7 @@ const UserService = require('../../services/user/UserService');
 const config = require('../../config');
 const UserServiceInstance = new UserService();
 
-async function createUser(req, res) {
+async function createUser (req, res) {
   try {
     const result = await UserServiceInstance.create(req.body);
     if (result.success) {
@@ -24,7 +24,7 @@ async function createUser(req, res) {
 
 }
 
-async function getUser(req, res){
+async function getUser (req, res) {
   try {
     const user = await UserServiceInstance.getUser(req.id);
     return res.send(user);
@@ -33,7 +33,7 @@ async function getUser(req, res){
   }
 }
 
-async function getUsers(req, res){
+async function getUsers (req, res) {
   try {
     const result = await UserServiceInstance.getUsers();
     if(result.success){
@@ -47,7 +47,7 @@ async function getUsers(req, res){
   }
 }
 
-async function signIn(req, res){
+async function signIn (req, res) {
   try {
     const result = await UserServiceInstance.signin(req.body);
     if(result.success){
@@ -68,7 +68,7 @@ async function signIn(req, res){
   }
 }
 
-async function signOut(req, res){
+async function signOut (req, res) {
   try {
     res.cookie('jwt','', {
       httpOnly: true,

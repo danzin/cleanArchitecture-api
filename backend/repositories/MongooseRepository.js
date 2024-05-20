@@ -17,7 +17,7 @@ class MongooseRepository {
 
   create(body, session = null) {
     if (session) {
-      return this.model.create([body], { session });
+      return this.model.create([body], { session }).then(docs => docs[0]);;
     }
     return this.model.create(body);
   }
@@ -34,7 +34,7 @@ class MongooseRepository {
     return queryObj.exec();
   }
 
-  find(query, projection = { __v: 0 }, sort = { id: 1 }, options = {}, session = null) {
+  find(query, sort, projection = { __v: 0 }, options = {}, session = null) {
     const queryObj = this.model.find(query, projection, options).sort(sort).select({ __v: 0, "password": 0 });
     if (session) {
       queryObj.session(session);
@@ -60,10 +60,10 @@ class MongooseRepository {
       });
   }
 
-  addPhoto(userId, photo, options = {}, session = null) {
+  addPhoto(userId, photoId, options = {}, session = null) {
     return this.model.findOne({ _id: userId }).session(session).exec()
       .then(user => {
-        user.photos.push(photo);
+        user.photos.push(photoId);
         return user.save({ ...options, session });
       });
   }

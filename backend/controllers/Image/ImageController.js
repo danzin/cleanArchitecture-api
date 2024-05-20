@@ -5,7 +5,13 @@ const ImageServiceInstance = new ImageService();
 async function uploadImage (req, res) {
   try {
     let result = await ImageServiceInstance.cloudUpload(req.file.buffer, req.user.id);
-    res.status(200).send(result);
+
+    if(result.success){
+      res.status(200).send(result.body);
+    }else{
+      res.status(500).send(result.body)
+    }
+
   } catch (e) {
     console.error(e);
     res.status(500).send('Error uploading file', e.message);
@@ -19,16 +25,44 @@ async function removeImage (req, res) {
 
     let result = await ImageServiceInstance.removeImage(userId, imageId);
     if(result.success){
-      res.status(200).send(result);
+      res.status(200).send(result.body);
     }else{
       res.status(500).send(result.body)
     }
     
   } catch (e) {
     console.error(e);
-    res.status(500).send('Error uploading file', e.message);
+    res.status(500).send('Error removing file', e.message);
   }
 }
 
+async function getSingleImage (req, res) {
+  try {
+    const {imageId} = req.params;
+    console.log(imageId.length)
+    let result = await ImageServiceInstance.getSingleImage(imageId);
+    if(result.success){
+      res.status(200).send(result.body);
+    }else{
+      res.status(500).send(result.body)
+    }
 
-module.exports = { uploadImage, removeImage };
+  } catch (e) { 
+    console.error(e);
+    res.status(500).send('Error getting image', e.message)
+  }
+}
+
+async function getImages (req, res) {
+    const {imageIds} = req.body;
+    
+    let result = await ImageServiceInstance.getAll(imageIds);
+    if(result.success){
+      res.status(200).send(result.body);
+    }else{
+      res.status(500).send(result.body)
+    }
+}
+
+
+module.exports = { uploadImage, removeImage, getSingleImage, getImages};

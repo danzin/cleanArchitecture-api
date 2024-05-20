@@ -6,10 +6,13 @@ const imageSchema = new mongoose.Schema(
     assetId: {type: String, required: true},
     publicId: {type: String, required: true},
     createdAt: {type: Date, required: true},
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    }
+    user:{
+      id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      },
+      username: String  
+    } 
   }
 
 )

@@ -19,7 +19,7 @@ class ImageService {
     this.imageRepository = new MongooseRepository(ImageModel);
   }
 
-  async cloudUpload(fileBuffer, userId) {
+  async cloudUpload (fileBuffer, userId) {
     try {
 
       return MongooseRepository.initiateTransaction(async (session) => {
@@ -27,7 +27,7 @@ class ImageService {
         if (!user) {
           throw new Error('User not found');
         }
-        if (user.photos.length >= 10) {
+        if (user?.photos.length >= 10) {
           throw new Error('User not found');
         }
   
@@ -47,9 +47,8 @@ class ImageService {
           assetId: result.asset_id,
           publicId: result.public_id,
           createdAt: result.created_at,
-          user: userId
+          user: { id: userId, username: user.username}
         }, session);
-  
         await this.userRepository.addPhoto(userId, photo._id, {}, session);
   
    
@@ -82,8 +81,8 @@ class ImageService {
         if(response.result == 'ok'){
           await this.userRepository.update(userId, user, { new: true }, session);
           await this.imageRepository.delete(image._id, session);
-
           return { success: true, body: result };
+
         }else{
           return { success: false, body: result };
         }
@@ -95,6 +94,28 @@ class ImageService {
     }
   }
 
+
+  async getSingleImage (imageId) {
+    try {
+      const image = await this.imageRepository.findOne({publicId: imageId});
+      if(!image) return { success: false, body: 'Image not found' }
+      return { success: true, body: image };
+    } catch (e) {
+      console.error(e);
+      return { success: false, body: e.message }
+    }
+  }
+
+  async getAll (imageIds) {
+    try {
+      const images = await this.imageRepository.find({ 'publicId': { $in: imageIds } }, {createdAt: -1} );
+      if(!images) return { success: false, body: 'Images not found'};
+      return { success: true, body: images };
+    } catch (e) {
+      console.error(e);
+      return { success: false, body: e.message }
+    }
+  }
 }
 
 module.exports = ImageService;
