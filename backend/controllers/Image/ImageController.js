@@ -38,7 +38,6 @@ async function removeImage (req, res) {
 
 async function getSingleImage (req, res) {
   try {
-
     let result = await ImageServiceInstance.getSingleImage(req.imageId);
     if(result.success){
       res.status(200).send(result.body);

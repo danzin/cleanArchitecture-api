@@ -7,8 +7,9 @@ class Validator {
   static imageIdValidator = (req, res, next) => {
     const imageId = req.params.imageId || null;
 
-    if (id && typeof id === "string" && id.length == 20){
+    if (imageId && typeof imageId === "string" && imageId.length === 20){
       req.imageId = imageId;
+
       next();
     } else {
       res.status(400).send(resMw.sendError(Messages.responses.invalidId));
