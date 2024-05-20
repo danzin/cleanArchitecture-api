@@ -9,13 +9,13 @@ let router = express.Router();
 
 router.post('/signup', Validator.bodyValidator, Validator.newUserValidator, createUser);
 router.get('/', protected, getUsers)
-router.get('/:id', Validator.idValidator, getUser);
+router.get('/:id', Validator.userIdValidator, getUser);
 router.post('/signin', Validator.bodyValidator, Validator.userLoginDetailsValidator, signIn);
-router.put('/:id', Validator.idValidator, Validator.bodyValidator, protected, editUser);
+router.put('/:id', Validator.userIdValidator, Validator.bodyValidator, protected, editUser);
 router.post('/signout', signOut);
 
 router.post('/image/upload', protected, upload.single('image'), uploadImage)
-router.delete('/image/remove', Validator.bodyValidator, protected, removeImage  )
+router.delete('/image/remove', Validator.bodyValidator, protected, removeImage)
 
 
 module.exports = router;

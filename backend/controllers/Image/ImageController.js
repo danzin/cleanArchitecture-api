@@ -38,9 +38,8 @@ async function removeImage (req, res) {
 
 async function getSingleImage (req, res) {
   try {
-    const {imageId} = req.params;
-    console.log(imageId.length)
-    let result = await ImageServiceInstance.getSingleImage(imageId);
+
+    let result = await ImageServiceInstance.getSingleImage(req.imageId);
     if(result.success){
       res.status(200).send(result.body);
     }else{
@@ -54,9 +53,8 @@ async function getSingleImage (req, res) {
 }
 
 async function getImages (req, res) {
-    const {imageIds} = req.body;
-    
-    let result = await ImageServiceInstance.getAll(imageIds);
+
+    let result = await ImageServiceInstance.getAll();
     if(result.success){
       res.status(200).send(result.body);
     }else{

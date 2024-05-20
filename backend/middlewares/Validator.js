@@ -4,7 +4,19 @@ const ObjectId = require("mongoose").Types.ObjectId;
 
 class Validator {
 
-  static idValidator = (req, res, next) =>  {
+  static imageIdValidator = (req, res, next) => {
+    const imageId = req.params.imageId || null;
+
+    if (id && typeof id === "string" && id.length == 20){
+      req.imageId = imageId;
+      next();
+    } else {
+      res.status(400).send(resMw.sendError(Messages.responses.invalidId));
+    }
+
+  }
+
+  static userIdValidator = (req, res, next) =>  {
     const id = req.params.id || null;
   
     if (id && typeof id === "string" && ObjectId.isValid(id)) {

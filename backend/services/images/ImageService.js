@@ -77,14 +77,13 @@ class ImageService {
 
         user.photos.pull(image._id);
         const response = await cloudinary.uploader.destroy(imagePubId, { resource_type: 'image', invalidate: true });
-        console.log(result)
         if(response.result == 'ok'){
           await this.userRepository.update(userId, user, { new: true }, session);
           await this.imageRepository.delete(image._id, session);
-          return { success: true, body: result };
+          return { success: true, body: response };
 
         }else{
-          return { success: false, body: result };
+          return { success: false, body: response };
         }
         
       });
@@ -106,9 +105,9 @@ class ImageService {
     }
   }
 
-  async getAll (imageIds) {
+  async getAll () {
     try {
-      const images = await this.imageRepository.find({ 'publicId': { $in: imageIds } }, {createdAt: -1} );
+      const images = await this.imageRepository.find({}, {createdAt: -1} );
       if(!images) return { success: false, body: 'Images not found'};
       return { success: true, body: images };
     } catch (e) {

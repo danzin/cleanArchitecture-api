@@ -5,6 +5,7 @@ const Validator = require('../../middlewares/Validator');
 let router = express.Router();
 
 router.get('/all', getImages)
-router.get('/:imageId', Validator.bodyValidator ,getSingleImage);
+router.get('/:imageId', Validator.imageIdValidator, getSingleImage);
 
 module.exports = router;
+
