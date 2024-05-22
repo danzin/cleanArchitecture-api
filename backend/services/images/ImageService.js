@@ -115,6 +115,44 @@ class ImageService {
       return { success: false, body: e.message }
     }
   }
+
+  async updateAvatar(fileBuffer, userId) {
+    try {
+      return MongooseRepository.initiateTransaction(async (session) => {
+        const user = await this.userRepository.findById(userId, { __v: 0 }, { lean: false }, session);
+        if (!user) {
+          throw new Error('User not found');
+        }
+
+        if (user.avatar) {
+          const imagePubId = user.avatar.split('/').pop().split('.')[0];
+          await cloudinary.uploader.destroy(`avatars/${imagePubId}`, { resource_type: 'image', invalidate: true });
+        }
+
+        const result = await new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream({
+            folder: 'avatars',
+            transformation: [
+              { width: 300, height: 300, crop: 'fill' } 
+            ]
+          }, (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result);
+            }
+          });
+          streamifier.createReadStream(fileBuffer).pipe(stream);
+        });
+        user.avatar = result.url;
+        await user.save({ session });
+
+        return { success: true, body: user.avatar };
+      });
+    } catch (e) {
+      return { success: false, body: e.message };
+    }
+  }
 }
 
 module.exports = ImageService;

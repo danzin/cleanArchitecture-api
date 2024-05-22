@@ -1,6 +1,9 @@
 const UserService = require('../../services/user/UserService');
 const config = require('../../config');
+const ImageService = require('../../services/images/ImageService');
+
 const UserServiceInstance = new UserService();
+const ImageServiceInstance = new ImageService();
 
 async function createUser (req, res) {
   try {
@@ -99,7 +102,15 @@ async function editUser (req, res) {
     res.status(500).send(e);    
   }
 }
+async function updateAvatar(req, res) {
+    const result = await ImageServiceInstance.updateAvatar(req.file.buffer, req.user.id);
 
+    if (result.success) {
+      return res.send(result.body);
+    } else {
+      return res.status(400).send(result);
+    }
+}
 
 
 module.exports = { 
@@ -108,5 +119,6 @@ module.exports = {
   signIn,
   editUser,
   getUsers,
-  signOut
+  signOut,
+  updateAvatar
 };

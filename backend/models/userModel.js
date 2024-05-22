@@ -10,7 +10,8 @@ const userSchema = new mongoose.Schema(
     photos: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Image'
-    }]
+    }],
+    avatar: { type: String }
   },
   {
     timestamps: true,
