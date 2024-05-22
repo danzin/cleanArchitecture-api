@@ -9,7 +9,6 @@ class Validator {
 
     if (imageId && typeof imageId === "string" && imageId.length === 20){
       req.imageId = imageId;
-
       next();
     } else {
       res.status(400).send(resMw.sendError(Messages.responses.invalidId));

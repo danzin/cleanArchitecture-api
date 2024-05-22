@@ -37,9 +37,9 @@ async function getUsers (req, res) {
   try {
     const result = await UserServiceInstance.getUsers();
     if(result.success){
-      res.send(result);   
+      res.send(result.body);   
      }else{
-      res.status(400).send(result)
+      res.status(400).send(result.body)
     }
   } catch (e) {
     res.status(500).send(e);    

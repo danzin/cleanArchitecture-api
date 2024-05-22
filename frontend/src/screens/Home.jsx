@@ -8,6 +8,7 @@ const Home = () => {
   return (
     <div className='max-w-4xl mx-auto'>
     <Navbar/>
+    <ImageGallery/>
     <Outlet/>
 
     <div>Home</div>

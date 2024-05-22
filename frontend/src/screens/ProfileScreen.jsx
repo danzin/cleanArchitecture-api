@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 import { setCredentials } from '../slices/authSlice';
-import { useUpdateUserMutation } from '../slices/usersApiSlice';
+import { useUpdateUserMutation } from '../slices/users/usersApiSlice';
 const ProfileScreen = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');

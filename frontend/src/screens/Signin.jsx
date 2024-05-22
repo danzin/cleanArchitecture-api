@@ -1,6 +1,6 @@
 import { useEffect, useState  } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import { useLoginMutation } from '../slices/usersApiSlice';
+import { useLoginMutation } from '../slices/users/usersApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';

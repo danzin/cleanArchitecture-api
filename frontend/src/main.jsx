@@ -10,12 +10,14 @@ import {
   createRoutesFromElements,
   Route,
   RouterProvider,
-  Routes
 } from 'react-router-dom'
 import PrivateRoute from './components/PrivateRoute.jsx';
 import Signin from './screens/Signin.jsx';
 import Signup from './screens/Signup.jsx';
 import ProfileScreen from './screens/ProfileScreen.jsx';
+import Forbidden from './screens/Forbidden.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
+import Dashboard from './screens/Dashboard.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -23,11 +25,19 @@ const router = createBrowserRouter(
       <Route index={true} path='/' element={<Home/>}/>
       <Route path='/signin' element={<Signin/>}/>
       <Route path='/signup' element={<Signup/>}/>
-      
+      <Route path='/forbidden' element={<Forbidden/>}/>
+
       { /* Private Routes */ }
       <Route path='' element={<PrivateRoute />}>
         <Route path='/profile' element={<ProfileScreen />} />
+        <Route path='/upload' element={<ProfileScreen />} />
       </Route>
+
+      { /* Protected Routes */ }
+       <Route path='' element={<ProtectedRoute />}>
+        <Route path='/dashboard' element={<Dashboard />} />
+      </Route>
+      
     </Route>
   )
 )

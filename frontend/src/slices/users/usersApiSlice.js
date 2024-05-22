@@ -1,7 +1,7 @@
-import { apiSlice } from "./apiSlice";
+import { apiSlice } from "../apiSlice";
 
 //TODO: Consider separate constants file
-const USERS_URL = '/api/users';
+const USERS_URL = '/api/user';
 
 export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -32,7 +32,11 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         body: data
       }) 
     }),
+    loadUsers: builder.query({
+      query: () => `${USERS_URL}/`
+    })
+
   })
 })
 
-export const { useLoginMutation, useLogoutMutation, useRegisterMutation, useUpdateUserMutation } = usersApiSlice;
+export const { useLoginMutation, useLogoutMutation, useRegisterMutation, useUpdateUserMutation, useLoadUsersQuery } = usersApiSlice;

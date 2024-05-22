@@ -1,11 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { useLogoutMutation } from "../slices/usersApiSlice";
+import { useLogoutMutation } from "../slices/users/usersApiSlice";
 import { clearCredentials } from '../slices/authSlice';
 
 const Navbar = () => {
   const { userInfo } = useSelector((state) => state.auth);
-
   const dispatch = useDispatch();
   const [logout] = useLogoutMutation();
   const navigate = useNavigate();
@@ -49,8 +48,17 @@ const Navbar = () => {
               </div>
               <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
               <li>
+                {
+                  userInfo.isAdmin && 
+                (<Link to='/dashboard' className="justify-between">
+                    Dashboard
+                </Link> )
+                }
                 <Link to='/profile' className="justify-between">
                   Profile
+                 </Link> 
+                 <Link to='/upload' className="justify-between">
+                  Upload
                  </Link> 
               </li>
               <li>

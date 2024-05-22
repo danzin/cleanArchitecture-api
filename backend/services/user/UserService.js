@@ -58,8 +58,9 @@ class UserService {
 
         // Generate a token
         const token = generateToken(existingUser);
-        const { username, email, _id }  = existingUser;
-        return { success: true, body: { username, email, _id }, token };
+        const { username, email, _id, isAdmin }  = existingUser;
+        console.log(isAdmin);
+        return { success: true, body: { username, email, _id, isAdmin }, token };
 
       }else{
         return { success: false, body: 'Invalid email or password' }
