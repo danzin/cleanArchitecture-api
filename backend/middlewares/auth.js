@@ -3,7 +3,7 @@ const resMw = require( "./responses" );
 const config = require('../config');
 const Messages = require( "../config/messages" );
 
-const protected = (req, res, next) => {
+const protectedRoute = (req, res, next) => {
   let token = req.cookies.jwt;
 
   if (token) {
@@ -29,4 +29,4 @@ const isAdmin = (req, res, next) => {
   }
 };
 
-module.exports = { protected , isAdmin };
+module.exports = { protectedRoute , isAdmin };
