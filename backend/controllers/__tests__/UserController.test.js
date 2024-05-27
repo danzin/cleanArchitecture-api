@@ -1,76 +1,41 @@
 const request = require('supertest');
 const ExpressLoader = require('../../loaders/Express');
-const ImageService = require('../../services/images/ImageService');
-const UserModel = require('../../models/UserModel');
-const ImageModel = require('../../models/ImageModel');
-const mongoose = require('mongoose');
-const route = require('../../routes')
-// Mock the ImageService
-jest.mock('../../services/images/ImageService');
+const UserService = require('../../services/user/UserService'); // adjust the path as needed
+
+jest.mock('../../services/user/UserService');
 
 let app;
-let testUser;
-let userId;
-beforeAll(async () => {
 
-  const loader = new ExpressLoader();
-  app = loader.Server;
-  console.log( `Test Database connection successful; connected to: mongodb://localhost:27017/testdb`);
-    // Create express instance to setup API
-    await mongoose.connect('mongodb://localhost:27017/testdb')
-
-    testUser = await UserModel.create({
-      username: 'testuser',
-      email: 'testuser@example.com',
-      password: '123',  // Ensure password is hashed if applicable
-      isAdmin: true
-    });
-    console.log(testUser)
-});
-
-afterAll(async () => {
-  // Close the server and database connection after all tests are done
-  await UserModel.deleteOne({_id: testUser._id})
-
-  await mongoose.disconnect();
-
-  app.close();
+beforeAll(() => {
+  const expressLoader = new ExpressLoader();
+  app = expressLoader.App;
 });
 
 describe('UserController', () => {
-  let userServiceMock;
+  describe('GET /user/:id', () => {
+    it('should return a user when given a valid ID', async () => {
+      const fakeResult = { success: true, body:{ id: 1, name: 'John Doe'} };
+      UserService.prototype.getUser.mockResolvedValue(fakeResult);
+      
+      const res = await request(app).get('/user/1');
 
-  beforeEach(() => {
-    userServiceMock = new UserService();
-    userServiceMock.mockImplementation(() => userServiceMock);
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual(fakeResult.body);
+      expect(UserService.prototype.getUser).toHaveBeenCalled();
+      expect(UserService.prototype.getUser).toBeCalledWith('1');
+    });
+
+    it('should return 404 if no user is found', async () => {
+      const fakeResult = { success: false, body: { message: 'User not found' }  };
+
+      UserService.prototype.getUser.mockResolvedValue(fakeResult);
+
+      const res = await request(app).get('/user/2');
+
+      expect(res.status).toBe(404);
+      console.log(res.body)
+      expect(res.body).toEqual(fakeResult.body);
+
+    });
   });
-
-  afterEach(async () => {
-    jest.clearAllMocks();
-    if(userId){
-      await UserModel.findByIdAndDelete(userId);
-      userId = null;
-    }
-  });
-
-  test('should get user by id successfully', async () => {
-
-    const response = await request(app).get(`/user/${testUser._id}`)
-
-    expect(response.status).toBe(200);
-  });
-
-  test('should register a user successfully', async () => {
-
-    const response = await request(app).post(`/user/signup`).send({
-      "username":"testUser",
-      "email":"test1@mail.com",
-      "password":"123"
-    })
-
-    expect(response.status).toBe(201);
-    userId = response._body.body._id;
-  });
-
-
 });

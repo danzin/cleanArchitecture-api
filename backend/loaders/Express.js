@@ -7,7 +7,7 @@ const config = require("../config");
 const cookieParser = require('cookie-parser');
 
 class ExpressLoader {
-  constructor(){
+  constructor() {
     const app = express();
 
     app.use(morgan("dev"));
@@ -20,20 +20,26 @@ class ExpressLoader {
     routes(app);
     app.use(ExpressLoader.errorHandler);
 
-    this.server = app.listen(config.port, () => {
-      logger.info(`Express running, now listening on port ${config.port}`);
-    });
-  }
-  
+    if (process.env.NODE_ENV !== 'test') {
+      this.server = app.listen(config.port, () => {
+        logger.info(`Express running, now listening on port ${config.port}`);
+      });
+    }
 
-  get Server () {
+    this.app = app; // Store the app instance
+  }
+
+  get Server() {
     return this.server;
+  }
+
+  get App() {
+    return this.app;
   }
 
   static errorHandler(error, req, res, next) {
     let parsedError;
 
-    //Gracefully parse error object
     try {
       if (error && typeof error === "object") {
         parsedError = JSON.stringify(error);
@@ -44,10 +50,8 @@ class ExpressLoader {
       logger.error(e);
     }
 
-    // Log the original error
     logger.error(parsedError);
 
-    // If response is already sent, don't attempt to respond to client
     if (res.headersSent) {
       return next(error);
     }
@@ -57,9 +61,6 @@ class ExpressLoader {
       error
     });
   }
-
 }
 
-
 module.exports = ExpressLoader;
-

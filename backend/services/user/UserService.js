@@ -31,8 +31,8 @@ class UserService {
   async getUser(id){
     try {
       const result = await this.MongooseRepositoryInstance.findById(id);
-
-      if(!result) return { success: false, body:'User not found'};
+      console.log('im here!!!!!!!!!')
+      if(!result) return { success: false, body: { message: 'User not found' }};
       return {success: true, body: result};
     } catch (e) {
       return { success:  false, body: e.message}
@@ -43,7 +43,7 @@ class UserService {
     try {
       const result = await this.MongooseRepositoryInstance.find({});
 
-      if(!result) return { success: false, body:'No users found'};
+      if(!result) return { success: false, body: { message: 'No users found' }};
       return {success: true, body: result};
     } catch (e) {
       return { success: false, body: e.message}
@@ -63,7 +63,7 @@ class UserService {
         return { success: true, body: { username, email, _id, isAdmin }, token };
 
       }else{
-        return { success: false, body: 'Invalid email or password' }
+        return { success: false, body: { message: 'Invalid email or password' } }
       }
    
     } catch (e) {
@@ -78,7 +78,7 @@ class UserService {
       if (!userToEdit) {
         return { success: false, body: 'User not found' };
       }
-      if(userToEdit.isAdmin === true) return { success: false, body: 'Can not edit admin user' };
+      if(userToEdit.isAdmin === true) return { success: false, body:{ message: 'Can not edit admin user' }};
 
       // Check if the editing user is an admin or the user themselves
       if (!editingUser.isAdmin && editingUser.id !== userToEditId) {

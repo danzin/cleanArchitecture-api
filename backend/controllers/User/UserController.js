@@ -8,7 +8,7 @@ const ImageServiceInstance = new ImageService();
 async function createUser (req, res) {
   try {
     const result = await UserServiceInstance.create(req.body);
-    if (result.success) {
+    if (result?.success) {
       const { token } = result;
       delete result.token;
 
@@ -22,53 +22,49 @@ async function createUser (req, res) {
       return res.status(400).send(result);
     }  
   } catch (e) {
-    res.status(500).send(e);    
+    console.error(e.message)
+    res.status(500).send(e.message);    
   }
 
 }
 
 async function getUser (req, res) {
-  try {
-    const user = await UserServiceInstance.getUser(req.id);
-    return res.send(user);
-  } catch (e) {
-    res.status(404).send(e);    
-  }
+    const result = await UserServiceInstance.getUser(req.id);
+    if(result.success){
+       res.send(result.body);   
+     }else{
+       result.body.message ? res.status(404).send(result.body) : res.status(500).send(result.body)
+    }
+
 }
 
 async function getUsers (req, res) {
-  try {
     const result = await UserServiceInstance.getUsers();
     if(result.success){
       res.send(result.body);   
      }else{
-      res.status(400).send(result.body)
-    }
-  } catch (e) {
-    res.status(500).send(e);    
+      result.body.message ? res.status(404).send(result.body) : res.status(500).send(result.body)
 
-  }
+    }
+
 }
 
 async function signIn (req, res) {
-  try {
     const result = await UserServiceInstance.signin(req.body);
     if(result.success){
       const { token } = result;
       delete result.token;
 
-      return res.cookie('jwt', token, {
+       res.cookie('jwt', token, {
         httpOnly: true,
         secure: config.env !== 'development', //true if production
         sameSite: 'Strict',
         maxAge: 30 * 24 * 60 * 60 * 1000
       }).status(200).send(result);
     }else{
-      return res.status(400).send(result);
+      result.body.message ? res.status(500).send(result.body.message) : res.status(500).send(result.body)
     }
-  } catch (e) {
-    res.status(500).send(e);    
-  }
+
 }
 
 async function signOut (req, res) {
