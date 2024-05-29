@@ -12,6 +12,10 @@ cloudinary.config({
   api_secret: config.api_secret
 });
 
+  /**
+   * Creates an instance of the ImageService class.
+   * Initializes the user and image repositories with their respective Mongoose models.
+   */
 class ImageService {
   
   constructor() {
@@ -19,6 +23,14 @@ class ImageService {
     this.imageRepository = new MongooseRepository(ImageModel);
   }
 
+/**
+ * Uploads an image to Cloudinary, creates an image document in the database, and associates it with the user.
+ * The process is performed within a MongoDB transaction to ensure consistency.
+ * @param {Buffer} fileBuffer - The buffer of the image file to upload.
+ * @param {string} userId - The ID of the user uploading the image.
+ * @returns {Promise} Returns a Promise that resolves to an object indicating success and the new photo document, or an error message on failure.
+ * @throws {Error} Throws an error if the transaction fails and is aborted.
+ */
   async cloudUpload (fileBuffer, userId) {
     try {
 
@@ -61,6 +73,14 @@ class ImageService {
   
   }
 
+/**
+ * Removes an image from Cloudinary and deletes the associated image document from the database.
+ * The process is performed within a MongoDB transaction to ensure consistency.
+ * @param {string} userId - The ID of the user who owns the image.
+ * @param {string} imagePubId - The public ID of the image to remove from Cloudinary.
+ * @returns {Promise} Returns a Promise that resolves to an object indicating success or failure of the image removal process.
+ * @throws {Error} Throws an error if the transaction fails and is aborted.
+ */
   async removeImage(userId, imagePubId) {
     try {
       
@@ -93,7 +113,11 @@ class ImageService {
     }
   }
 
-
+  /**
+   * Retrieves a single image document by its public ID.
+   * @param {string} imageId - The public ID of the image to retrieve.
+   * @returns {Promise} Returns a Promise that resolves to an object indicating success and the image document, or an error message on failure.
+   */
   async getSingleImage (imageId) {
     try {
       const image = await this.imageRepository.findOne({publicId: imageId});
@@ -105,6 +129,10 @@ class ImageService {
     }
   }
 
+  /**
+   * Retrieves all image documents, sorted by creation date in descending order.
+   * @returns {Promise} Returns a Promise that resolves to an object indicating success and an array of image documents, or an error message on failure.
+   */
   async getAll () {
     try {
       const images = await this.imageRepository.find({}, {createdAt: -1} );
@@ -116,6 +144,14 @@ class ImageService {
     }
   }
 
+  /**
+ * Updates the avatar of a user by uploading a new image to Cloudinary and saving the new URL in the user's document.
+ * The process is performed within a MongoDB transaction to ensure consistency.
+ * @param {Buffer} fileBuffer - The buffer of the new avatar image file.
+ * @param {string} userId - The ID of the user whose avatar is to be updated.
+ * @returns {Promise} Returns a Promise that resolves to an object indicating success and the new avatar URL, or an error message on failure.
+ * @throws {Error} Throws an error if the transaction fails and is aborted.
+ */
   async updateAvatar(fileBuffer, userId) {
     try {
       return MongooseRepository.initiateTransaction(async (session) => {

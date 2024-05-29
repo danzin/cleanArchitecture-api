@@ -10,6 +10,7 @@ class ExpressLoader {
   constructor() {
     const app = express();
 
+    // Set up middleware
     app.use(morgan("dev"));
     app.use(bodyParser.urlencoded({  
       extended: false,
@@ -18,6 +19,8 @@ class ExpressLoader {
     app.use(express.json());
     app.use(cookieParser());
     routes(app);
+
+    // Set up error handling
     app.use(ExpressLoader.errorHandler);
 
     if (process.env.NODE_ENV !== 'test') {
@@ -26,7 +29,8 @@ class ExpressLoader {
       });
     }
 
-    this.app = app; // Store the app instance
+    // Store the app instance
+    this.app = app; 
   }
 
   get Server() {
@@ -37,6 +41,14 @@ class ExpressLoader {
     return this.app;
   }
 
+  /**
+   * @description Default error handler to be used with express
+   * @param error Error object
+   * @param req {object} Express req object
+   * @param res {object} Express res object
+   * @param next {function} Express next object
+   * @returns {*}
+   */
   static errorHandler(error, req, res, next) {
     let parsedError;
 
