@@ -5,6 +5,12 @@ const ImageService = require('../../services/images/ImageService');
 const UserServiceInstance = new UserService();
 const ImageServiceInstance = new ImageService();
 
+/**
+ * Creates a new user and sets a JWT cookie on the response.
+ * @param {object} req - The request object, containing the user data in `req.body`.
+ * @param {object} res - The response object.
+ * @returns {Promise<void>} Sends the created user data and sets a JWT cookie on success, or an error message on failure.
+ */
 async function createUser (req, res) {
   try {
     const result = await UserServiceInstance.create(req.body);
@@ -28,6 +34,12 @@ async function createUser (req, res) {
 
 }
 
+/**
+ * Retrieves a user by ID.
+ * @param {object} req - The request object, containing the user ID in `req.id`.
+ * @param {object} res - The response object.
+ * @returns {Promise<void>} Sends the user data on success, or an error message on failure.
+ */
 async function getUser (req, res) {
     const result = await UserServiceInstance.getUser(req.id);
     if(result.success){
@@ -38,6 +50,12 @@ async function getUser (req, res) {
 
 }
 
+/**
+ * Retrieves all users.
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {Promise<void>} Sends an array of user data on success, or an error message on failure.
+ */
 async function getUsers (req, res) {
     const result = await UserServiceInstance.getUsers();
     if(result.success){
@@ -49,6 +67,12 @@ async function getUsers (req, res) {
 
 }
 
+/**
+ * Signs in a user and sets a JWT cookie on the response.
+ * @param {object} req - The request object, containing the user credentials in `req.body`.
+ * @param {object} res - The response object.
+ * @returns {Promise<void>} Sends the user data and sets a JWT cookie on success, or an error message on failure.
+ */
 async function signIn (req, res) {
     const result = await UserServiceInstance.signin(req.body);
     if(result.success){
@@ -67,6 +91,12 @@ async function signIn (req, res) {
 
 }
 
+/**
+ * Signs out a user by clearing the JWT cookie.
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {Promise<void>} Sends a logout confirmation message on success, or an error message on failure.
+ */
 async function signOut (req, res) {
   try {
     res.cookie('jwt','', {
@@ -78,7 +108,12 @@ async function signOut (req, res) {
   }
 }
 
-
+/**
+ * Edits a user's email and/or password.
+ * @param {object} req - The request object, containing the editing user in `req.user`, the user ID in `req.id`, and the new email and/or password in `req.body`.
+ * @param {object} res - The response object.
+ * @returns {Promise<void>} Sends the updated user data on success, or an error message on failure.
+ */
 async function editUser (req, res) {
   try {
     const editingUser = req.user;
@@ -98,6 +133,13 @@ async function editUser (req, res) {
     res.status(500).send(e);    
   }
 }
+
+/**
+ * Updates a user's avatar by uploading a new image.
+ * @param {object} req - The request object, containing the user in `req.user` and the image file buffer in `req.file.buffer`.
+ * @param {object} res - The response object.
+ * @returns {Promise<void>} Sends the new avatar URL on success, or an error message on failure.
+ */
 async function updateAvatar(req, res) {
     const result = await ImageServiceInstance.updateAvatar(req.file.buffer, req.user.id);
 

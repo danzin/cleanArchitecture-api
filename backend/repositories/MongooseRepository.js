@@ -12,7 +12,7 @@ class MongooseRepository {
   }
 
   /**
-   * @description Create a new document on the Model
+   * @description Execute an aggregation pipeline
    * @param pipeline {array} Aggregate pipeline to execute
    * @param {object} session - Optional MongoDB session.
    * @returns {Promise} Returns the results of the query
